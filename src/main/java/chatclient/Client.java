@@ -22,7 +22,7 @@ class Client{
     String messagePrefix = "";
     String username = "";
 
-    ReceiveMessages receiveThread;
+    ReceiveMessageWorker receiveThread;
     
 
     String quittingKey = "#quit";
@@ -76,7 +76,7 @@ class Client{
     }
 
     public void open()   {
-        ReceiveMessages receiveThread = new ReceiveMessages(ms);
+        ReceiveMessageWorker receiveThread = new ReceiveMessageWorker(ms);
         receiveThread.start();
     }
     public void halt()
@@ -94,13 +94,12 @@ class Client{
         ms.send(msgPacket);
     }
     
-    // TODO: Name more relevant    
-    protected class ReceiveMessages extends Thread
+    protected class ReceiveMessageWorker extends Thread
     {
         protected boolean loop = true;
         protected MulticastSocket ms;
         protected DateTimeFormatter messageTimeFormatter;
-        public ReceiveMessages(MulticastSocket ms)
+        public ReceiveMessageWorker(MulticastSocket ms)
         {
             this.ms = ms;
         }
@@ -114,12 +113,9 @@ class Client{
         }
         private String buildMessageFromPacket(DatagramPacket packet)
         {
-            //Get Packet Data and String Address
-            byte[] packetData = packet.getData();
-            InetAddress originAddress = packet.getAddress();
             //Create String
             LocalDateTime now = LocalDateTime.now();
-            String outputString = String.format("%s : %s", messageTimeFormatter.format(now), new String(packetData, StandardCharsets.UTF_8));
+            String outputString = String.format("%s : %s", messageTimeFormatter.format(now), new String(packet.getData(), StandardCharsets.UTF_8));
             return outputString;
         }
         private void halt()
@@ -133,6 +129,7 @@ class Client{
                 {
                     DatagramPacket dp = this.receivePacket();
                     String outputString = this.buildMessageFromPacket(dp);
+                    // TODO: This output is written where new messages are written
                     System.out.println(outputString);
                 }
             }catch(Exception e)
