@@ -21,10 +21,18 @@ import java.io.*;
 class ChatClient{
 	public static void main(String[] args)
 	{
+		// TODO: Provide usage
+		// TODO: Allow input IP address + Naiive args check
+		// TODO: Allow input of portNum... Throw if x < 1024
+		// TODO: Allow users to provide a username within the chat system.
+		// NOTE: Don't check if it's used.
+
 		Client client = new Client();
 		client.start();
 	}
 }
+
+
 
 class Client{
 	
@@ -38,6 +46,7 @@ class Client{
 	public Client()
 	{
 		//Set Up Client
+		// TODO:  Remove 'contstructor' pass around
 		constructor();
 	}
 
@@ -61,6 +70,10 @@ class Client{
 			constructor();
 		}
 		try{
+			
+			// TODO Ouput message so User knows how to leave
+			// TODO Keep message at the top of the screen at all times
+
 			//Start Looking for Messages to Receive
 			ReceiveMessages receiveThread = new ReceiveMessages(ms);
 			receiveThread.start();
@@ -97,6 +110,7 @@ class Client{
 		ms.send(msgPacket);
 	}
 	
+	// TODO: Name more relevant	
 	protected class ReceiveMessages extends Thread
 	{
 		protected boolean loop = true;
@@ -144,3 +158,5 @@ class Client{
 
 }
 
+
+// TODO: Add basic tests
