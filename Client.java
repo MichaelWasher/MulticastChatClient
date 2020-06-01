@@ -5,28 +5,26 @@ import java.nio.charset.StandardCharsets;
 import java.io.*;
 
 class Client{
-	
+    
+    // Properties
 	MulticastSocket ms;
 	int portNum = 40202;
-	String addressString = "239.0.202.1"; ///Change Later
-	InetAddress multicastAddress;
+    InetAddress multicastAddress;
+    
 	ReceiveMessages receiveThread;
 
 	String quittingKey = "#quit";
-	public Client()
-	{
-		//Set Up Client
-		// TODO:  Remove 'contstructor' pass around
-		constructor();
-	}
-
-	private void constructor()
-	{
-		try{
+    public Client(InetAddress multicastAddress, int portNum) throws IllegalArgumentException 
+    {
+        //Set Up Client
+        // TODO: perform checks on the variables
+		// TODO: Remove 'contstructor' pass around
+        try{
 			//Set Up Client
-			multicastAddress = InetAddress.getByName(addressString);
-			ms = new MulticastSocket(portNum);
-			ms.joinGroup(multicastAddress);	
+            this.multicastAddress = multicastAddress;
+            this.portNum = portNum;
+            this.ms = new MulticastSocket(portNum);          
+			this.ms.joinGroup(this.multicastAddress);	
 		}catch(Exception e)
 		{
 			e.printStackTrace();
@@ -35,18 +33,13 @@ class Client{
 
 	public void start()
 	{
-		if(multicastAddress == null || ms == null)
-		{
-			constructor();
-		}
 		try{
 			
 			// TODO Ouput message so User knows how to leave
 			// TODO Keep message at the top of the screen at all times
-
+            
 			//Start Looking for Messages to Receive
-			ReceiveMessages receiveThread = new ReceiveMessages(ms);
-			receiveThread.start();
+            this.open();
 			//Loop for sending Messages
 			Scanner s = new Scanner(System.in);
 
@@ -57,14 +50,19 @@ class Client{
 					break;
 				sendMessage(message);
 			}
-			//Close all Open Streams and Desconstruct Method
-			halt();
+            //Close all Open Streams and Desconstruct Method
+            s.close();
+			this.halt();
 		}catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
 
+    public void open()   {
+        ReceiveMessages receiveThread = new ReceiveMessages(ms);
+        receiveThread.start();
+    }
 	public void halt()
 	{
 		ms.close();
