@@ -10,6 +10,7 @@ repositories {
 }
 dependencies {
     testCompile "junit:junit:4.12"
+    compile 'commons-cli:commons-cli:1.4'
 }
 jar {
     baseName = 'ChatClient'
@@ -17,7 +18,7 @@ jar {
     manifest {
         attributes(
         'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
-        'Main-Class': 'ChatClient'
+        'Main-Class': 'chatclient.ChatClient'
         )
     }
 }
