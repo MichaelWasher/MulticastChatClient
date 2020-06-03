@@ -47,6 +47,12 @@ class Client{
         }
     }
 
+    // Used for mocking values for Unit Tests
+    protected Client(String username, InetAddress multicastAddress, int portNum, Socket ms) throws IllegalArgumentException
+    {
+        // TODO init project with dep injections
+    }
+
     public void start()
     {
         try{
