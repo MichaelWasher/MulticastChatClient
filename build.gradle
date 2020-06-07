@@ -8,6 +8,10 @@ targetCompatibility = 1.7
 repositories {
     mavenCentral()
 }
+sourceSets {
+    main.java.srcDirs = ['src/main/java/chatclient']
+    main.resources.srcDirs = ['src/main/java/chatclient']
+}
 dependencies {
     testCompile "junit:junit:4.12"
     compile 'commons-cli:commons-cli:1.4'
