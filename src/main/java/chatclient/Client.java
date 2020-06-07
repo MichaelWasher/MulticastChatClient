@@ -14,10 +14,10 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.net.SocketException;
 import java.util.logging.Logger;
+import java.net.InetSocketAddress;
 
 class Client {
 
@@ -29,6 +29,7 @@ class Client {
     InetAddress multicastAddress;
     String messagePrefix = "";
     String username = "";
+    String localIPAddress = "";
 
     ReceiveMessageWorker receiveThread;
 
@@ -43,8 +44,9 @@ class Client {
             this.ms = new MulticastSocket(portNum);
             this.ms.joinGroup(this.multicastAddress);
             this.username = username;
+            this.localIPAddress = this.getLocalIPAddress();
             // Set message prefix
-            messagePrefix = String.format("%s(%s)\t", this.username, this.multicastAddress.getHostAddress());
+            messagePrefix = String.format("%s(%s)\t", this.username, this.localIPAddress);
         } catch (Exception e) {
             LOGGER.info("One of the arguments provided were unable to be processed.");
             LOGGER.info(e.getStackTrace().toString());
@@ -58,6 +60,22 @@ class Client {
         // TODO init project with dep injections
     }
 
+    private String getLocalIPAddress() {
+        String localAddress = "";
+        try{
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("google.com", 80));
+            localAddress = socket.getLocalAddress().toString();
+            localAddress = localAddress.replaceFirst("/", "");
+            socket.close();
+        } catch (IOException | SecurityException e)
+        {
+            localAddress = this.multicastAddress.toString();
+        }
+        return localAddress;
+        
+    }
+    
     private void displayOpeningMessage() {
         // Ouput message so User knows how to leave
         System.out.print("\033[H\033[2J"); // Clear the page
@@ -94,7 +112,7 @@ class Client {
         } catch (Exception e) {
             LOGGER.info(e.getStackTrace().toString());
             LOGGER.info("Closing now.");
-        }finally{
+        } finally {
             // Close all Open Streams and Desconstruct Method
             this.halt();
         }
